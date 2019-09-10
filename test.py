@@ -1,8 +1,5 @@
 from dlstorage.utils.benchmark import *
 
-
-
-
 f = FileSystemStorageManager(TestTagger(), 'videos')
 #f.put('BigBuckBunny.mp4', 'bunny')
 #print(f.get('bunny', TRUE, 60*30))
