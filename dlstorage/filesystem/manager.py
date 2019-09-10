@@ -43,7 +43,8 @@ class FileSystemStorageManager(StorageManager):
 
 		self.videos.add(target)
 
-	def get(self, name, condition, clip_size):
+
+	def get(self, name, condition, clip_size, threads=None):
 		"""retrievies a clip of a certain size satisfying the condition
 		"""
 		if name not in self.videos:
@@ -51,7 +52,7 @@ class FileSystemStorageManager(StorageManager):
 
 		physical_clip = os.path.join(self.basedir, name)
 
-		return read_if(physical_clip, condition, clip_size)
+		return read_if(physical_clip, condition, clip_size, threads=threads)
 
 	def delete(self, name):
 		physical_clip = os.path.join(self.basedir, name)
@@ -59,5 +60,22 @@ class FileSystemStorageManager(StorageManager):
 
 	def list(self):
 		return list(self.videos)
+
+	def size(self, name):
+		seq = 0
+		size = 0
+		physical_clip = os.path.join(self.basedir, name)
+
+		while True:
+
+			try:
+				file = add_ext(physical_clip, '.seq', seq) 
+				size += sum(os.path.getsize(os.path.join(file,f)) for f in os.listdir(file))
+				seq += 1
+
+			except FileNotFoundError:
+				break
+
+		return size
 
 
