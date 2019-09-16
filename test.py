@@ -16,6 +16,6 @@ print(vd.get('desired name', TRUE, 438))
 
 vd = VDMSStorageManager(TestTagger())
 #p2 = VDMSPerfTest(vd, 'TrafficTimeLapse.mp4')
-p2 = VDMSPerfTest(vd, 'f20sec.mp4')
+p2 = VDMSPerfTest(vd, 'f60sec.mp4')
 #p2.getParaTenTenSec()
 p2.runAll()
