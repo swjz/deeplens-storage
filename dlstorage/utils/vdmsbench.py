@@ -137,7 +137,7 @@ class VDMSPerfTest(PerformanceTest):
 
 
     def getParaTenTenSec(self):
-        for para in range(1,5):
+        for para in range(1,3):
             args = {'encoding': XVID, 'size': -1, 'limit': 60*DEFAULT_FRAME_RATE, 'sample': 1.0}
 
             #time put
@@ -145,7 +145,7 @@ class VDMSPerfTest(PerformanceTest):
             self.sm.put(self.test_video, tname, args)
 
             now = time.time()
-            time_result = timeof(self.sm.get(tname, TRUE, int(10*DEFAULT_FRAME_RATE), threads=Pool(para)))
+            time_result = timeof(self.sm.get(tname, TRUE, int(10*DEFAULT_FRAME_RATE), para))
             full_time_result = (time.time() - now)
             log = {'time': time_result,'first_frame': full_time_result - time_result, 'retr_clip_size': 10, 'para': para}
             log.update(args)
