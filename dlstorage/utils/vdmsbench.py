@@ -173,7 +173,7 @@ class VDMSPerfTest(PerformanceTest):
         print('[dlstorage] get() for different selectivities 10 sec clips of different 10 sec sizes')
         self.getSelTenTenSec()
         print('[dlstorage] get() for different number of threads 10 sec clips of different 10 sec sizes')
-        self.getSelTenTenSec()
+        self.getParaTenTenSec()
 
     
 
