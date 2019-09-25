@@ -59,7 +59,7 @@ def test():
 
     print()
     print("Test #3")
-    tags = {'dog': [0,1,2,6,7], 'cat': [0,2,3,6,7], 'people': [0,1,4,5]}
+    tags = {'dog': [0,1,2,6,7], 'cat': [0,2,3,6,7], 'people': [0,1,4,5]}  # same as #2, just swapping order
     no_frames = 8
     division = partition(tags, no_frames)
     print(division)
