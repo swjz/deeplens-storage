@@ -22,15 +22,18 @@ def partition(tags: Dict[str, List[int]], no_frames: int, penalty: float = 1.5) 
     divisions = set()
     
     for _, indexes in tags.items():
-        previous_index = -1  # initial state
+        previous_index = -1  # index of previous occurrence with same label
         for index in indexes:
             if index in divisions:  # we've already marked cut at here
                 previous_index = index
                 continue
             skip_benefit[index] += index - previous_index - 1
             if skip_benefit[index] > penalty:
-                divisions.add(index)
-                divisions.add(previous_index + 1)
+                if previous_index + 1 in divisions:
+                    divisions.add(index)
+                elif skip_benefit[index] > penalty * 2:  # two cuts needed, so more penalty needed
+                    divisions.add(previous_index + 1)
+                    divisions.add(index)
             previous_index = index
         
         # take care of the end of video clip
@@ -54,6 +57,12 @@ def test():
     division = partition(tags, no_frames)
     print(division)
 
+    print()
+    print("Test #3")
+    tags = {'dog': [0,1,2,6,7], 'cat': [0,2,3,6,7], 'people': [0,1,4,5]}
+    no_frames = 8
+    division = partition(tags, no_frames)
+    print(division)
 
 if __name__ == "__main__":
     test()
