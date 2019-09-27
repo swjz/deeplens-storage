@@ -4,7 +4,8 @@ This module partitions video clips logically - it returns division points.
 
 from typing import List, Set, Tuple, Dict
 
-def partition(tags: Set[Tuple[str, int, int]], no_frames: int, cost_table: Dict[str, float] = dict(), default_cost: float = 1) -> List[int]:
+def partition(tags: Set[Tuple[str, int, int]], no_frames: int, cost_table: Dict[str, float] = dict(),
+    default_cost: float = 1, penalty: float = 2) -> List[int]:
     """partition() takes annotations of each frame, penalty for each cut and returns best partition strategy.
 
     Args:
@@ -16,6 +17,7 @@ def partition(tags: Set[Tuple[str, int, int]], no_frames: int, cost_table: Dict[
         no_frames - number of frames for this video clip
         cost_table (optional) - the skip cost (weight) for each label present.
         default_cost (optional) - cost (weight) if not found from cost_table (Default 1)
+        penalty (optional) - for each cut, add how much penalty to total cost (Default 2)
 
     Returns:
         divisions (list of division points) - frame indexes BEFORE which we should cut
@@ -32,7 +34,7 @@ def partition(tags: Set[Tuple[str, int, int]], no_frames: int, cost_table: Dict[
         cutting_points.add(start)
         cutting_points.add(end)
 
-    # Step 2. Enumerate All Possible Segments (with zero cost)
+    # Step 2. Enumerate All Possible Segments (with penalty added)
     # Enumerate all pairs of cutting points returned by step 1. These enumerate the boundaries of all possible segments.
     # In: [0,1,3,7]
     # Out: [(0,1), (0,3), (0,7), (1,3), (1,7), (3,7)]
@@ -41,7 +43,7 @@ def partition(tags: Set[Tuple[str, int, int]], no_frames: int, cost_table: Dict[
     for start in cutting_points:
         for end in cutting_points:
             if start < end:
-                possible_segments.add((0, start, end))
+                possible_segments.add((penalty, start, end))
 
     # Step 3. Assign a Skip Cost to each segment
     # For each tuple of points returned by Step 2, calculate the skip cost (number of labels present * time * weights for the labels present)
@@ -66,27 +68,65 @@ def partition(tags: Set[Tuple[str, int, int]], no_frames: int, cost_table: Dict[
     # - Add a directed edge -> when segment1.end == segment2.start
     # Over this graph any path that starts with a vertex segment.start == 0, and segment.end == T is full segmentation.
 
-    
+    graph = {vertex[1]: dict() for vertex in weighted_segments}
+    for segment in weighted_segments:
+        graph[segment[1]].update({segment[2]: segment[0]})
 
     # Step 5. Algorithm
     # For each vertex where segment.start == 0, run djikstra's algorithm to find the minimum cost path that terminates at a segment where segment.end == T
     # Return the lowest cost path for all possible start vertices.
 
+    def dijkstra(graph, start, end):
+        dist = dict()
+        prev = dict()
+        unvisited = set()
+        for edge_start, edge in graph.items():
+            unvisited.add(edge_start)
+            for edge_end in edge:
+                unvisited.add(edge_end)
+        dist[start] = 0
 
-    return path
+        current = start
+        while True:
+            unvisited.remove(current)
+            for neighbor in graph[current]:
+                cost = graph[current][neighbor]
+                if neighbor not in dist or dist[current] + cost < dist[neighbor]:
+                    dist[neighbor] = dist[current] + cost
+                    prev[neighbor] = current
+
+            min_dist = None
+            for vertex in unvisited:
+                if min_dist == None or dist[vertex] < min_dist:
+                    min_dist = dist[vertex]
+                    current = vertex
+
+            if current == end:
+                 break
+
+        assert current == end
+        path = [end]
+        while current != start:
+            path.append(prev[current])
+            current = prev[current]
+
+        path.reverse()
+        return path
+
+    return dijkstra(graph, 0, no_frames)
 
 def test():
     print("Test #1")
     tags = {('cat', 3, 9), ('dog', 5, 8), ('people', 0, 6)}
     no_frames = 9
-    division = partition(tags, no_frames)
+    division = partition(tags, no_frames, penalty=3)
     print(division)
     
     print()
     print("Test #2")
     tags = {('cat', 0, 1), ('cat', 2, 4), ('cat', 6, 8), ('dog', 0, 3), ('dog', 6, 8), ('people', 0, 2), ('people', 4, 6)}
     no_frames = 8
-    division = partition(tags, no_frames)
+    division = partition(tags, no_frames, penalty=3)
     print(division)
 
 if __name__ == "__main__":
