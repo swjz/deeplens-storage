@@ -120,14 +120,18 @@ def test():
     tags = {('cat', 3, 9), ('dog', 5, 8), ('people', 0, 6)}
     no_frames = 9
     division = partition(tags, no_frames, penalty=3)
-    print(division)
+    assert division == [0, 3, 9]
+    print("In: {('cat', 3, 9), ('dog', 5, 8), ('people', 0, 6)}")
+    print("Out: [0, 3, 9]")
     
     print()
     print("Test #2")
     tags = {('cat', 0, 1), ('cat', 2, 4), ('cat', 6, 8), ('dog', 0, 3), ('dog', 6, 8), ('people', 0, 2), ('people', 4, 6)}
     no_frames = 8
     division = partition(tags, no_frames, penalty=3)
-    print(division)
+    assert division == [0, 2, 4, 6, 8]
+    print("In: {('cat', 0, 1), ('cat', 2, 4), ('cat', 6, 8), ('dog', 0, 3), ('dog', 6, 8), ('people', 0, 2), ('people', 4, 6)}")
+    print("Out: [0, 2, 4, 6, 8]")
 
 if __name__ == "__main__":
     test()
