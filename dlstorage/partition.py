@@ -133,5 +133,12 @@ def test():
     print("In: {('cat', 0, 1), ('cat', 2, 4), ('cat', 6, 8), ('dog', 0, 3), ('dog', 6, 8), ('people', 0, 2), ('people', 4, 6)}")
     print("Out: [0, 2, 4, 6, 8]")
 
+    print()
+    print("Test #3")
+    tags = {('surfboard', 84, 86), ('boat', 30, 31), ('bird', 47, 52), ('boat', 9, 10), ('person', 43, 48), ('person', 52, 65), ('suitcase', 25, 26), ('suitcase', 69, 70), ('truck', 26, 27), ('bus', 23, 24), ('person', 66, 89), ('bird', 45, 46), ('bird', 53, 54), ('person', 0, 21), ('person', 29, 37), ('car', 38, 42), ('car', 21, 34), ('car', 14, 16), ('mouse', 19, 21), ('car', 61, 76), ('truck', 23, 24), ('car', 35, 36), ('bus', 26, 27), ('bird', 59, 60), ('boat', 27, 28), ('mouse', 15, 16), ('suitcase', 30, 31), ('bird', 38, 43), ('surfboard', 6, 8), ('person', 27, 28), ('suitcase', 33, 35), ('bird', 75, 83), ('cell phone', 79, 80), ('person', 39, 40), ('bird', 61, 70), ('boat', 15, 16), ('suitcase', 36, 37), ('mouse', 36, 38), ('person', 41, 42), ('person', 49, 50), ('mouse', 76, 78), ('car', 11, 12), ('surfboard', 79, 80), ('mouse', 13, 14), ('suitcase', 22, 24)}
+    no_frames = 89
+    division = partition(tags, no_frames, penalty=20)
+    print(division)
+
 if __name__ == "__main__":
     test()
